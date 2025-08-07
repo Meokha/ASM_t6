@@ -34,12 +34,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+
+
 public class ReportFragment extends Fragment {
 
     private MaterialButton btnStartDate, btnEndDate, btnGenerate;
     private TextView tvReportPeriod, tvTotalExpense;
     private PieChart pieChart;
     private BarChart barChart;
+    private TextView tvDate;
 
     private Date startDate, endDate;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -56,6 +59,8 @@ public class ReportFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        TextView tvRemaining = view.findViewById(R.id.tv_remaining_budget);
+        TextView tvUsage = view.findViewById(R.id.tv_budget_usage);
         // Bind UI
         btnStartDate = view.findViewById(R.id.btn_start_date);
         btnEndDate = view.findViewById(R.id.btn_end_date);
@@ -64,21 +69,37 @@ public class ReportFragment extends Fragment {
         tvTotalExpense = view.findViewById(R.id.tv_total_expense);
         pieChart = view.findViewById(R.id.pie_chart_category);
         barChart = view.findViewById(R.id.bar_chart_daily);
+        tvDate = view.findViewById(R.id.tv_date);
+
 
         // Khởi tạo ngày mặc định là hôm nay
-        startDate = endDate = new Date();
-        updateDateTexts();
+        startDate = null;
+        endDate = null;
+
+        //tvDate.setText("Select a date");
 
         btnStartDate.setOnClickListener(v -> showDatePicker(true));
         btnEndDate.setOnClickListener(v -> showDatePicker(false));
 
         btnGenerate.setOnClickListener(v -> generateReport());
+        double totalBudget = 1000;
+        double totalSpent = 750;
+        double remaining = totalBudget - totalSpent;
+        int percentUsed = (int) ((totalSpent / totalBudget) * 100);
+
+        tvTotalExpense = view.findViewById(R.id.tv_total_expense);
+        tvTotalExpense.setText("$0.00"); // hoặc gán giá trị động
+
     }
 
     private void showDatePicker(boolean isStartDate) {
         final Calendar calendar = Calendar.getInstance();
-        if (isStartDate) calendar.setTime(startDate);
-        else calendar.setTime(endDate);
+
+        if (isStartDate && startDate != null) {
+            calendar.setTime(startDate);
+        } else if (!isStartDate && endDate != null) {
+            calendar.setTime(endDate);
+        }
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
                 (DatePicker view, int year, int month, int dayOfMonth) -> {
@@ -94,17 +115,27 @@ public class ReportFragment extends Fragment {
         datePickerDialog.show();
     }
 
+
     private void updateDateTexts() {
-        String text = "Report from " + dateFormat.format(startDate) + " to " + dateFormat.format(endDate);
-        tvReportPeriod.setText(text);
+        if (startDate != null && endDate != null) {
+            String text = "Report from " + dateFormat.format(startDate) + " to " + dateFormat.format(endDate);
+            tvReportPeriod.setText(text);
+        } else {
+            tvReportPeriod.setText("Please select a date range");
+        }
     }
 
     private void generateReport() {
+        if (startDate == null || endDate == null) {
+            Toast.makeText(getContext(), "Please select both start and end dates", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         List<Expense> allExpenses = AppDatabase.getInstance(requireContext()).expenseDao().getAllExpenses();
 
         List<Expense> filteredExpenses = new ArrayList<>();
         for (Expense e : allExpenses) {
-            Date date = e.getDate(); // make sure this returns java.util.Date
+            Date date = e.getDate();
             if (date != null && !date.before(startDate) && !date.after(endDate)) {
                 filteredExpenses.add(e);
             }
@@ -118,6 +149,7 @@ public class ReportFragment extends Fragment {
         setupPieChart(filteredExpenses);
         setupBarChart(filteredExpenses);
     }
+
 
     private void updateTotalExpense(List<Expense> expenses) {
         double total = 0;

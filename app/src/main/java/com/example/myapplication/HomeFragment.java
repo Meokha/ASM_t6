@@ -27,6 +27,8 @@ public class HomeFragment extends Fragment {
     private RecyclerView rvRecentExpenses;
     private ExpenseAdapter expenseAdapter;
     private List<Expense> expenseList;
+    private TextView tvRemainingBudget, tvBudgetUsage;
+
 
     private TextView tvTotalBudget, tvSpentAmount;
     private LinearProgressIndicator progressBar;
@@ -45,6 +47,8 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        tvRemainingBudget = view.findViewById(R.id.tv_remaining_budget);
+        tvBudgetUsage = view.findViewById(R.id.tv_budget_usage);
 
         // Ánh xạ view tổng quan ngân sách
         tvTotalBudget = view.findViewById(R.id.tv_total_budget);
@@ -117,11 +121,17 @@ public class HomeFragment extends Fragment {
             totalSpent += e.getAmount();
         }
 
-        // Hiển thị thông tin tổng quan
+        // Tính còn lại và phần trăm
+        double remaining = totalBudget - totalSpent;
+        int usagePercent = totalBudget > 0 ? (int) ((totalSpent / totalBudget) * 100) : 0;
+
+        // Cập nhật UI
         tvTotalBudget.setText("$" + String.format("%.2f", totalBudget));
         tvSpentAmount.setText("$" + String.format("%.2f", totalSpent));
+        tvRemainingBudget.setText("$" + String.format("%.2f", remaining));
+        tvBudgetUsage.setText(usagePercent + "%");
 
-        int usagePercent = totalBudget > 0 ? (int) ((totalSpent / totalBudget) * 100) : 0;
         progressBar.setProgress(usagePercent);
     }
+
 }

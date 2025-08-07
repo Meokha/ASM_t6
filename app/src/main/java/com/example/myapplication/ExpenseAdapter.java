@@ -44,9 +44,16 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         holder.tvAmount.setText("$" + expense.getAmount());
         holder.tvDescription.setText(expense.getDescription());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-        String formattedDate = sdf.format(new Date(expense.getCreatedAt())); // Nếu dùng kiểu long
-        holder.tvDate.setText(formattedDate);
+        //String formattedDate = sdf.format(new Date(expense.getCreatedAt())); // Nếu dùng kiểu long
+       // holder.tvDate.setText(formattedDate);
+        Date date = expense.getDate(); // đảm bảo getDate() trả về java.util.Date
+        if (date != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+            holder.tvDate.setText(sdf.format(date));
+        } else {
+            holder.tvDate.setText("No date");
+        }
+
 
         // Xử lý nút xóa
         holder.btnDelete.setOnClickListener(v -> {
