@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp">
+
+    <EditText
+        android:id="@+id/edtUsername"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@drawable/bg_input_neumorphism"
+        android:autofillHints="false"
+        android:inputType="text"
+        android:hint="Enter username"
+        android:paddingLeft="5dp"
+        android:layout_marginTop="10dp" />
+    <EditText
+        android:id="@+id/edtPassword"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:autofillHints="false"
+        android:inputType="textPassword"
+        android:background="@drawable/bg_input_neumorphism"
+        android:layout_marginTop="10dp"
+        android:hint="Enter Password"
+        android:paddingLeft="5dp" />
+    <EditText
+        android:id="@+id/edtMail"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:autofillHints="false"
+        android:inputType="textEmailAddress"
+        android:background="@drawable/bg_input_neumorphism"
+        android:layout_marginTop="10dp"
+        android:hint="Enter Email"
+        android:paddingLeft="5dp" />
+
+    <EditText
+        android:id="@+id/edtPhone"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:autofillHints="false"
+        android:inputType="phone"
+        android:background="@drawable/bg_input_neumorphism"
+        android:layout_marginTop="10dp"
+        android:hint="Enter Phone"
+        android:paddingLeft="5dp" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"/>
+    <!-- Gender Selection -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gender:"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold"/>
+    <RadioGroup
+        android:id="@+id/rgGender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp">
+        <RadioButton
+            android:id="@+id/rbMale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Male" />
+        <RadioButton
+            android:id="@+id/rbFemale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Female"
+            android:layout_marginStart="30dp" />
+    </RadioGroup>
+    <!-- Register Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginTop="20dp">
+
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Register"
+            android:textSize="18sp"
+            android:background="@drawable/bg_button"
+            android:backgroundTint="#FF59DD"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <!-- Login Text -->
+    <TextView
+        android:id="@+id/tvLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Do you want to Login"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16sp"
+        android:textStyle="bold|italic"
+        android:layout_marginTop="15dp"/>
+</LinearLayout>
+

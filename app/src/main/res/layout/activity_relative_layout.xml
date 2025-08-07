@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:text="BTec Pearson FPT"
+        android:textStyle="bold"
+        android:id="@+id/tvSchoolName"
+        android:layout_centerHorizontal="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="SE07103"
+        android:textStyle="bold"
+        android:layout_below="@id/tvSchoolName"
+        android:layout_centerInParent="true"
+        android:id="@+id/tvClassName"/>
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="150dp"
+        android:src="@drawable/logo_btec"
+        android:contentDescription="Logo"
+        android:layout_below="@id/tvClassName"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:id="@+id/imgLogo"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Account Register"
+        android:textSize="20sp"
+        android:textStyle="italic|bold"
+        android:layout_below="@id/imgLogo"
+        android:layout_centerInParent="true"/>
+</RelativeLayout>

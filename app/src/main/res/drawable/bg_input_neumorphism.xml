@@ -1,0 +1,21 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Bottom shadow (tối) -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#e0e5ec"/>
+            <corners android:radius="12dp"/>
+            <padding android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp"/>
+        </shape>
+    </item>
+
+    <!-- Top highlight (sáng) -->
+    <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#ffffff"
+                android:endColor="#d1d9e6"
+                android:angle="90"/>
+            <corners android:radius="12dp"/>
+        </shape>
+    </item>
+</layer-list>

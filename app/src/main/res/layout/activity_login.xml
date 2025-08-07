@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e0e5ec">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <!-- Card Container with shadow (Neumorphism) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:background="@drawable/bg_card_neumorphism"
+            android:elevation="10dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="60dp"
+            android:gravity="center_horizontal">
+
+            <!-- Logo -->
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/login"
+                android:background="@drawable/bg_circle_shadow"
+                android:scaleType="centerCrop"
+                android:layout_marginBottom="5dp" />
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="4dp"/>
+
+
+            <EditText
+                android:id="@+id/edtUsername"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="username"
+                android:padding="12dp"
+                android:textColor="#333"
+                android:textSize="14sp"
+                android:background="@drawable/bg_input_neumorphism"
+                android:drawablePadding="12dp"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/edtPassword"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="password"
+                android:padding="12dp"
+                android:textColor="#333"
+                android:inputType="textPassword"
+                android:textSize="14sp"
+                android:background="@drawable/bg_input_neumorphism"
+                android:drawablePadding="12dp"
+                android:layout_marginBottom="24dp"/>
+            <!-- Login Button -->
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/btnLogin"
+                android:text="Login"
+                android:background="@drawable/bg_button"
+                android:textColor="#fff"
+                android:textSize="16sp"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Footer -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvRegister"
+                android:text="Forgot password? or Sign Up"
+                android:textColor="#555555"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
