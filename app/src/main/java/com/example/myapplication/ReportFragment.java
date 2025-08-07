@@ -18,12 +18,14 @@ import com.example.myapplication.entity.Expense;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
@@ -42,6 +44,7 @@ public class ReportFragment extends Fragment {
     private TextView tvReportPeriod, tvTotalExpense;
     private PieChart pieChart;
     private BarChart barChart;
+
     private TextView tvDate;
 
     private Date startDate, endDate;
@@ -190,11 +193,15 @@ public class ReportFragment extends Fragment {
 
     private void setupBarChart(List<Expense> expenses) {
         HashMap<String, Double> dayMap = new HashMap<>();
+        SimpleDateFormat shortDateFormat = new SimpleDateFormat("dd/MM", Locale.getDefault());
+
+
         for (Expense e : expenses) {
-            String day = dateFormat.format(e.getDate());
+            String day = shortDateFormat.format(e.getDate()); // Bỏ năm
             double amount = e.getAmount();
             dayMap.put(day, dayMap.getOrDefault(day, 0.0) + amount);
         }
+
 
         List<BarEntry> entries = new ArrayList<>();
         List<String> labels = new ArrayList<>();
@@ -217,5 +224,13 @@ public class ReportFragment extends Fragment {
         desc.setText("By Day");
         barChart.setDescription(desc);
         barChart.invalidate();
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setGranularity(1f); // Đảm bảo mỗi nhãn ứng với 1 cột
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false); // tùy chọn: tắt đường kẻ ngang
+        xAxis.setLabelRotationAngle(-45);  // Xoay chữ chéo
+        xAxis.setTextSize(10f);
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
+
     }
 }
