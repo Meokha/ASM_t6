@@ -1,8 +1,9 @@
 package com.example.myapplication.entity;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-import java.util.Date; // ✅ đúng chỗ
+import java.util.Date;
 
 @Entity(tableName = "expense")
 public class Expense {
@@ -10,23 +11,52 @@ public class Expense {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
-    private long createdAt;
-
-    private Date date;
-    private String category;
     private String title;
     private double amount;
     private String description;
+    private String category; // Tên của budget liên quan
+    private Date date;       // Ngày thực hiện chi tiêu
+    private long createdAt;  // Thời gian tạo bản ghi
 
+    // --- CONSTRUCTORS ---
 
-    public Expense(String title, double amount, String description, long createdAt) {
+    /**
+     * Constructor rỗng (không tham số).
+     * Room cần constructor này để có thể tạo các đối tượng Entity.
+     */
+    public Expense() {
+    }
+
+    /**
+     * Constructor đầy đủ để chúng ta sử dụng trong code khi tạo một khoản chi mới.
+     * @Ignore báo cho Room bỏ qua, không sử dụng constructor này.
+     */
+    @Ignore
+    public Expense(String title, double amount, String description, String category, Date date) {
         this.title = title;
         this.amount = amount;
         this.description = description;
-        this.createdAt = createdAt;
+        this.category = category;
+        this.date = date;
+        this.createdAt = System.currentTimeMillis(); // Tự động gán thời gian tạo khi có chi tiêu mới
     }
 
-    // Getters & Setters
+    /*
+     * Constructor cũ của bạn đã được thay thế bằng constructor đầy đủ ở trên.
+     * Bạn có thể xóa nó đi để code gọn hơn.
+     *
+     * public Expense(String title, double amount, String description, long createdAt) {
+     *     this.title = title;
+     *     this.amount = amount;
+     *     this.description = description;
+     *     this.createdAt = createdAt;
+     * }
+     */
+
+
+    // --- Getters & Setters ---
+    // (Không thay đổi, giữ nguyên tất cả)
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

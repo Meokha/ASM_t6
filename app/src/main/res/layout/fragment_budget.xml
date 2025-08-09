@@ -15,7 +15,8 @@
         android:layout_margin="16dp"
         android:src="@drawable/ic_input_add"
         app:backgroundTint="#D9EAFD"
-        app:tint="#000000" />
+        app:tint="#000000"
+        />
 
     <!-- Danh sách ngân sách -->
 
@@ -24,8 +25,7 @@
         android:id="@+id/rvBudget"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_below="@id/btnAddBudget"
-        android:layout_marginTop="-88dp" />
+        android:layout_below="@id/btnAddBudget"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_recent_expenses"
@@ -51,18 +51,19 @@
         android:textSize="16sp"
         android:visibility="gone" />
 
-    <!-- Nút thêm expense -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_expense"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="20dp"
-        android:contentDescription="Add New Expense"
-        android:src="@drawable/ic_add_circle"
-        app:backgroundTint="#D9EAFD"
-        app:tint="@android:color/black"
-        app:elevation="6dp" />
+
+<!--    &lt;!&ndash; Nút thêm expense &ndash;&gt;-->
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/fab_add_expense"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_margin="20dp"-->
+<!--        android:contentDescription="Add New Expense"-->
+<!--        android:src="@drawable/ic_add_circle"-->
+<!--        app:backgroundTint="#D9EAFD"-->
+<!--        app:tint="@android:color/black"-->
+<!--        app:elevation="6dp" />-->
 
 </RelativeLayout>

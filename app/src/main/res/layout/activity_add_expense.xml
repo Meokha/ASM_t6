@@ -38,6 +38,24 @@
             android:background="@android:drawable/editbox_background"
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
+        <!-- ... các EditText cho Title, Amount ... -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:layout_marginTop="16dp"/>
+
+        <Spinner
+            android:id="@+id/spinner_category"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"/>
+
+        <!-- ... EditText cho Description và Button Save ... -->
         <TextView
             android:id="@+id/tv_date"
             android:layout_width="match_parent"

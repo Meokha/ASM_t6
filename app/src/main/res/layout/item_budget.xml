@@ -2,45 +2,108 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:elevation="4dp"
-    android:padding="12dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="8dp"
+    android:layout_margin="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <!-- Budget Name -->
-        <TextView
-            android:id="@+id/txtCategory"
+        <!-- Dòng chứa Tên và Tổng ngân sách -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Budget Name"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#000000" />
+            android:layout_height="wrap_content">
 
-        <!-- Amount -->
+            <!-- Đổi id từ txtCategory thành tvBudgetName cho dễ hiểu -->
+            <TextView
+                android:id="@+id/tvBudgetName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="Tên ngân sách"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Đổi id từ txtAmount thành tvTotalAmount -->
+            <TextView
+                android:id="@+id/tvTotalAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="1,000,000đ"
+                android:textColor="@color/purple_700"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
         <TextView
-            android:id="@+id/txtAmount"
-            android:layout_width="match_parent"
+            android:id="@+id/tvItemBudgetDate"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$0.00"
-            android:textColor="#009688"
-            android:textSize="16sp" />
-
-        <!-- Description -->
+            android:text="Ngày: 20/08/2025"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:textColor="#616161"
+            android:layout_marginTop="4dp"
+            android:layout_below="@id/tvBudgetName" />
+        <!-- (TÙY CHỌN) Mô tả - Bạn có thể giữ lại hoặc xóa đi nếu không cần -->
         <TextView
             android:id="@+id/txtDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Description here"
-            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:text="Mô tả ở đây"
             android:textColor="#757575"
-            android:layout_marginTop="4dp" />
+            android:textSize="14sp"
+            android:visibility="gone" /> <!-- Mặc định ẩn đi cho gọn -->
 
-        <!-- Action Buttons: Edit + Delete -->
+        <!-- ProgressBar hiển thị tiến độ chi tiêu -->
+        <ProgressBar
+            android:id="@+id/pbBudgetProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:progressTint="@color/purple_500"
+            android:max="100"
+            android:progress="60"/>
+
+        <!-- Dòng chứa thông tin "Đã chi" và "Còn lại" -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp">
+
+            <!-- THÊM MỚI: Hiển thị số tiền đã chi -->
+            <TextView
+                android:id="@+id/tvSpentAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="Đã chi: 600,000đ"
+                android:textSize="14sp" />
+
+            <!-- THÊM MỚI: Hiển thị số tiền còn lại -->
+            <TextView
+                android:id="@+id/tvRemainingAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="Còn lại: 400,000đ"
+                android:textColor="#4CAF50"
+                android:textSize="14sp"
+                android:textStyle="italic" />
+
+        </RelativeLayout>
+
+
+        <!-- Các nút Edit/Delete (giữ nguyên nếu bạn cần) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,14 +115,18 @@
                 android:id="@+id/btnEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edit" />
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:text="Sửa" />
 
             <Button
                 android:id="@+id/btnDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delete"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:textColor="@android:color/holo_red_dark"
+                android:text="Xóa"
                 android:layout_marginStart="8dp" />
         </LinearLayout>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>
