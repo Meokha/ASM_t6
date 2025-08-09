@@ -31,24 +31,19 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     private final NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
     // <-- THÊM MỚI: Định dạng ngày tháng
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-
-
     public BudgetAdapter(Context context, List<Budget> budgetList) {
         this.context = context;
         this.budgetList = budgetList;
     }
-
     @NonNull
     @Override
     public BudgetViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_budget, parent, false);
         return new BudgetViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull BudgetViewHolder holder, int position) {
         Budget budget = budgetList.get(position);
-
         // --- Hiển thị các thông tin cũ ---
         double totalAmount = budget.getAmount();
         double spentAmount = budget.getSpentAmount();
@@ -56,8 +51,8 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
         holder.tvBudgetName.setText(budget.getName());
         holder.tvTotalAmount.setText(currencyFormatter.format(totalAmount));
-        holder.tvSpentAmount.setText("Đã chi: " + currencyFormatter.format(spentAmount));
-        holder.tvRemainingAmount.setText("Còn lại: " + currencyFormatter.format(remainingAmount));
+        holder.tvSpentAmount.setText("Spent: " + currencyFormatter.format(spentAmount));
+        holder.tvRemainingAmount.setText("Remaining: " + currencyFormatter.format(remainingAmount));
 
         if (totalAmount > 0) {
             holder.pbBudgetProgress.setProgress((int) ((spentAmount / totalAmount) * 100));
@@ -75,7 +70,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         // --- THÊM MỚI: Logic để hiển thị ngày của budget ---
         if (budget.getBudgetDate() > 0) { // Chỉ hiển thị nếu có ngày hợp lệ
             String dateString = dateFormatter.format(new Date(budget.getBudgetDate()));
-            holder.tvItemBudgetDate.setText("Ngày: " + dateString);
+            holder.tvItemBudgetDate.setText("Date: " + dateString);
             holder.tvItemBudgetDate.setVisibility(View.VISIBLE);
         } else {
             // Ẩn đi nếu budget này không có ngày (ví dụ: dữ liệu cũ)
@@ -93,10 +88,10 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
         holder.btnDelete.setOnClickListener(v -> {
             new AlertDialog.Builder(context)
-                    .setTitle("Xóa ngân sách")
-                    .setMessage("Bạn có chắc muốn xóa ngân sách này không?")
-                    .setPositiveButton("Có", (dialog, which) -> deleteBudgetInBackground(budget, position))
-                    .setNegativeButton("Không", null)
+                    .setTitle("Clear budget")
+                    .setMessage("Are you sure you want to delete this budget?")
+                    .setPositiveButton("Yes", (dialog, which) -> deleteBudgetInBackground(budget, position))
+                    .setNegativeButton("No", null)
                     .show();
         });
     }

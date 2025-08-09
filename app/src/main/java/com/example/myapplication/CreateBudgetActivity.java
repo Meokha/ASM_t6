@@ -91,13 +91,13 @@ public class CreateBudgetActivity extends AppCompatActivity {
         String description = edtBudgetDercription.getText().toString().trim();
 
         if (name.isEmpty() || amountStr.isEmpty()) {
-            Toast.makeText(this, "Tên và số tiền không được để trống", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Name and amount cannot be blank", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // --- THÊM MỚI: Kiểm tra xem người dùng đã chọn ngày chưa ---
         if (selectedBudgetDate == null) {
-            Toast.makeText(this, "Vui lòng chọn ngày cho ngân sách", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please select a date for your budget.", Toast.LENGTH_SHORT).show();
             return;
         }
         // --- KẾT THÚC PHẦN THÊM MỚI ---
@@ -106,7 +106,7 @@ public class CreateBudgetActivity extends AppCompatActivity {
         try {
             amount = Double.parseDouble(amountStr);
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Số tiền không hợp lệ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid amount", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -123,9 +123,9 @@ public class CreateBudgetActivity extends AppCompatActivity {
                     budget.setDescription(description);
                     budget.setBudgetDate(selectedBudgetDate.getTime()); // Cập nhật ngày
                     db.budgetDao().updateBudget(budget);
-                    message = "Đã cập nhật ngân sách!";
+                    message = "Budget updated!";
                 } else {
-                    message = "Lỗi: Không tìm thấy ngân sách!";
+                    message = "Error: No budget found!";
                 }
             } else {
                 // Tạo mới
@@ -136,7 +136,7 @@ public class CreateBudgetActivity extends AppCompatActivity {
                 budget.setCreatedAt(System.currentTimeMillis());
                 budget.setBudgetDate(selectedBudgetDate.getTime()); // Thêm ngày
                 db.budgetDao().insertBudget(budget);
-                message = "Đã tạo ngân sách!";
+                message = "Budget created successfully!";
             }
 
             // Quay lại UI thread để hiển thị thông báo và kết thúc

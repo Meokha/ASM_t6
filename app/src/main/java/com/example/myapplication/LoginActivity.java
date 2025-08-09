@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -102,20 +104,30 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String username = edtUsername.getText().toString().trim();
                 String password = edtPassword.getText().toString().trim();
-                if (TextUtils.isEmpty(username)){
+                if (TextUtils.isEmpty(username)) {
                     edtUsername.setError("Enter username, please!");
                     return;
                 }
-                if (TextUtils.isEmpty(password)){
+                if (TextUtils.isEmpty(password)) {
                     edtPassword.setError("Enter password, please!");
                     return;
                 }
-                // kiem tra tai khoan nguoi dung co ton tai trong database khong?
+
+                // Gọi hàm từ repository để kiểm tra user
                 UserModel infoAccount = repository.getInfoAccountByUsername(username, password);
-                assert infoAccount != null;
-                if (infoAccount.getUsername() != null&& infoAccount.getId() > 0){
-                    // dang nhap thanh cong
-                    Intent intent = new Intent(LoginActivity.this, MainMenuActivity.class);
+
+                // === SỬA LẠI Ở ĐÂY: Bỏ lệnh 'assert' và dùng câu lệnh 'if' an toàn hơn ===
+                if (infoAccount != null) {
+                    // Nếu infoAccount không phải null, nghĩa là đăng nhập thành công
+
+                    // Lưu username vào SharedPreferences để các màn hình khác sử dụng
+                    SharedPreferences prefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("username", username);
+                    editor.apply();
+
+                    // Chuyển sang MainMenuActivity và gửi dữ liệu (giữ nguyên code cũ của bạn)
+                    Intent intent = new Intent(LoginActivity.this, MainMenuActivity.class); // <-- Sửa tên Activity nếu cần
                     Bundle bundle = new Bundle();
                     bundle.putInt("ID_ACCOUNT", infoAccount.getId());
                     bundle.putString("USER_ACCOUNT", infoAccount.getUsername());
@@ -123,13 +135,12 @@ public class LoginActivity extends AppCompatActivity {
                     bundle.putInt("ROlE_ACCOUNT", infoAccount.getRole());
                     intent.putExtras(bundle);
                     startActivity(intent);
-                    finish();// khong back lai ve trang dang nhap nua
+                    finish();
 
                 } else {
-                    // dang nhap that bai
-                    Toast.makeText(LoginActivity.this, "Account invalid", Toast.LENGTH_LONG).show();
+                    // Nếu infoAccount là null, nghĩa là đăng nhập thất bại
+                    Toast.makeText(LoginActivity.this, "Incorrect username or password", Toast.LENGTH_LONG).show();
                 }
-
             }
     });
     }

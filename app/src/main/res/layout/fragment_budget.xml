@@ -24,7 +24,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvBudget"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="match_parent"
         android:layout_below="@id/btnAddBudget"/>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -50,20 +50,5 @@
         android:textColor="#3D0301"
         android:textSize="16sp"
         android:visibility="gone" />
-
-
-<!--    &lt;!&ndash; Nút thêm expense &ndash;&gt;-->
-<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--        android:id="@+id/fab_add_expense"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_alignParentEnd="true"-->
-<!--        android:layout_margin="20dp"-->
-<!--        android:contentDescription="Add New Expense"-->
-<!--        android:src="@drawable/ic_add_circle"-->
-<!--        app:backgroundTint="#D9EAFD"-->
-<!--        app:tint="@android:color/black"-->
-<!--        app:elevation="6dp" />-->
 
 </RelativeLayout>

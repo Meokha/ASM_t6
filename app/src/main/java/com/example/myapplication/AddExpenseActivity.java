@@ -1,6 +1,7 @@
 package com.example.myapplication; // Hoặc package tương ứng của bạn
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -10,7 +11,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.example.myapplication.utils.NotificationHelper;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.entity.Budget;
@@ -35,12 +36,14 @@ public class AddExpenseActivity extends AppCompatActivity {
     private Date selectedDate;
     private AppDatabase db;
     private List<String> budgetCategories = new ArrayList<>();
+    private NotificationHelper notificationHelper;
     private final NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
+        notificationHelper = new NotificationHelper(this);
 
         db = AppDatabase.getInstance(this);
 
@@ -57,6 +60,13 @@ public class AddExpenseActivity extends AppCompatActivity {
 
         setupCategorySpinner();
         btnSave.setOnClickListener(v -> attemptToSaveExpense());
+        Button btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void attemptToSaveExpense() {
@@ -65,12 +75,12 @@ public class AddExpenseActivity extends AppCompatActivity {
         String description = etDescription.getText().toString().trim();
 
         if (TextUtils.isEmpty(title) || TextUtils.isEmpty(amountStr)) {
-            Toast.makeText(this, "Vui lòng nhập tiêu đề và số tiền", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter title and amount", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (spinnerCategory.getSelectedItem() == null) {
-            Toast.makeText(this, "Vui lòng chọn một ngân sách", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please select a budget", Toast.LENGTH_SHORT).show();
             return;
         }
         String selectedBudgetName = spinnerCategory.getSelectedItem().toString();
@@ -79,7 +89,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         try {
             newExpenseAmount = Double.parseDouble(amountStr);
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Số tiền không hợp lệ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid amount", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -88,7 +98,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             Budget targetBudget = db.budgetDao().findBudgetByName(selectedBudgetName);
 
             if (targetBudget == null) {
-                runOnUiThread(() -> Toast.makeText(this, "Lỗi: Không tìm thấy ngân sách", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(this, "Error: Budget not found", Toast.LENGTH_SHORT).show());
                 return;
             }
 
@@ -98,16 +108,11 @@ public class AddExpenseActivity extends AppCompatActivity {
             if (currentSpent + newExpenseAmount > totalLimit) {
                 double remaining = totalLimit - currentSpent;
                 String errorMessage = String.format(
-                        "Không đủ ngân sách! Bạn chỉ còn lại %s.",
+                        "Not enough budget! You are left with %s.",
                         currencyFormatter.format(remaining)
                 );
                 runOnUiThread(() -> Toast.makeText(AddExpenseActivity.this, errorMessage, Toast.LENGTH_LONG).show());
             } else {
-                // --- THAY ĐỔI DUY NHẤT Ở ĐÂY ---
-                // Dòng cũ (SAI):
-                // Expense newExpense = new Expense(title, newExpenseAmount, description, System.currentTimeMillis());
-                // newExpense.setDate(selectedDate);
-                // newExpense.setCategory(selectedBudgetName);
 
                 // Dòng mới (ĐÚNG):
                 Expense newExpense = new Expense(title, newExpenseAmount, description, selectedBudgetName, selectedDate);
@@ -120,7 +125,19 @@ public class AddExpenseActivity extends AppCompatActivity {
                 db.budgetDao().updateSpentAmount(selectedBudgetName, newExpenseAmount);
 
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "Đã lưu chi tiêu thành công!", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "Đã lưu chi tiêu thành công!", Toast.LENGTH_SHORT).show();
+                    // === THAY ĐỔI Ở ĐÂY ===
+                    // 1. Tạo một Intent để chứa kết quả
+                    Intent resultIntent = new Intent();
+
+                    // 2. Đóng gói dữ liệu cần gửi về
+                    resultIntent.putExtra("EXTRA_AMOUNT", newExpenseAmount);
+                    resultIntent.putExtra("EXTRA_BUDGET_NAME", selectedBudgetName);
+
+                    // 3. Đặt kết quả là OK và gửi kèm intent
+                    setResult(AppCompatActivity.RESULT_OK, resultIntent);
+
+                    // 4. Kết thúc Activity
                     finish();
                 });
             }
@@ -148,7 +165,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 adapter.notifyDataSetChanged();
                 if (budgetCategories.isEmpty()) {
-                    Toast.makeText(this, "Vui lòng tạo một ngân sách trước!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Please create a budget first!", Toast.LENGTH_LONG).show();
                     btnSave.setEnabled(false);
                 }
             });

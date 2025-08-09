@@ -1,5 +1,4 @@
 package com.example.myapplication.adapters;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -11,12 +10,10 @@ import com.example.myapplication.ExpensesFragment;
 import com.example.myapplication.HomeFragment;
 import com.example.myapplication.ReportFragment;
 import com.example.myapplication.SettingsFragment;
-
 public class ViewPageAdapter extends FragmentStateAdapter {
     public ViewPageAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
     }
-
     @NonNull
     @Override
     public Fragment createFragment(int position) {
@@ -34,7 +31,6 @@ public class ViewPageAdapter extends FragmentStateAdapter {
             return new HomeFragment();
         }
     }
-
     @Override
     public int getItemCount() {
         return 5;

@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.DatePickerDialog; // <-- THÊM MỚI: Import cần thiết
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
@@ -14,10 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.AppDatabase;
 import com.example.myapplication.entity.Expense;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar; // <-- THÊM MỚI: Import cần thiết
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -38,7 +41,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     @NonNull
     @Override
     public ExpenseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_expense, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_recent_expense, parent, false);
         return new ExpenseViewHolder(view);
     }
 
@@ -54,19 +57,18 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             holder.tvDate.setText(sdf.format(date));
         } else {
-            holder.tvDate.setText("Không có ngày");
+            holder.tvDate.setText("No date");
         }
 
         // Xử lý nút xóa
         holder.btnDelete.setOnClickListener(v -> {
             new AlertDialog.Builder(context)
-                    .setTitle("Xóa Chi Tiêu")
-                    .setMessage("Bạn có chắc muốn xóa khoản chi này?")
-                    .setPositiveButton("Có", (dialog, which) -> {
-                        // <-- SỬA LẠI: Gọi hàm xóa trên luồng nền
+                    .setTitle("Delete Spending")
+                    .setMessage("Are you sure you want to delete this expense?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
                         deleteExpenseInBackground(expense, position);
                     })
-                    .setNegativeButton("Không", null)
+                    .setNegativeButton("No", null)
                     .show();
         });
 
@@ -76,94 +78,118 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         });
     }
 
-    // <-- THÊM MỚI: Hàm xóa trên luồng nền
     private void deleteExpenseInBackground(Expense expense, int position) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
-            AppDatabase db = AppDatabase.getInstance(context);
+            com.example.myapplication.AppDatabase db = com.example.myapplication.AppDatabase.getInstance(context);
 
             String budgetName = expense.getCategory();
             double expenseAmount = expense.getAmount();
 
-            // 1. TRỪ tiền khỏi budget tương ứng
             if (budgetName != null && !budgetName.isEmpty()) {
-                db.budgetDao().subtractSpentAmount(budgetName, expenseAmount);
+                db.budgetDao().updateSpentAmount(budgetName, -expenseAmount); // Trừ đi số tiền đã chi
             }
 
-            // 2. Xóa expense
             db.expenseDao().delete(expense);
 
-            // Cập nhật giao diện trên UI Thread
             ((MainMenuActivity) context).runOnUiThread(() -> {
                 expenseList.remove(position);
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, expenseList.size());
-                Toast.makeText(context, "Đã xóa chi tiêu", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Deleted spending", Toast.LENGTH_SHORT).show();
             });
         });
     }
 
-    // <-- SỬA LẠI: Tách logic sửa ra một hàm riêng
     private void showEditExpenseDialog(Expense expense, int position) {
+        // Sử dụng Builder để tạo dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_expense, null);
+
         EditText etTitle = dialogView.findViewById(R.id.et_edit_title);
         EditText etAmount = dialogView.findViewById(R.id.et_edit_amount);
         EditText etDescription = dialogView.findViewById(R.id.et_edit_description);
-        // LƯU Ý: Dialog này chưa có Spinner để đổi category, sẽ xử lý ở bước sau
+        TextView tvDate = dialogView.findViewById(R.id.tv_edit_date);
+        final Calendar selectedDate = Calendar.getInstance();
 
+        // Điền dữ liệu cũ vào dialog
         etTitle.setText(expense.getTitle());
         etAmount.setText(String.valueOf(expense.getAmount()));
         etDescription.setText(expense.getDescription());
 
-        new AlertDialog.Builder(context)
-                .setTitle("Chỉnh sửa chi tiêu")
+        // Xử lý ngày tháng
+        if (expense.getDate() != null) {
+            selectedDate.setTime(expense.getDate());
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        tvDate.setText(sdf.format(selectedDate.getTime()));
+
+        tvDate.setOnClickListener(v -> {
+            int year = selectedDate.get(Calendar.YEAR);
+            int month = selectedDate.get(Calendar.MONTH);
+            int day = selectedDate.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(context, (view, year1, month1, dayOfMonth) -> {
+                selectedDate.set(year1, month1, dayOfMonth);
+                tvDate.setText(sdf.format(selectedDate.getTime()));
+            }, year, month, day);
+            datePickerDialog.show();
+        });
+
+        // Cấu hình và hiển thị dialog
+        builder.setTitle("Edit spending")
                 .setView(dialogView)
-                .setPositiveButton("Cập nhật", (dialogInterface, which) -> {
+                .setPositiveButton("Update", (dialogInterface, which) -> {
                     String newTitle = etTitle.getText().toString().trim();
                     String newAmountStr = etAmount.getText().toString().trim();
                     String newDescription = etDescription.getText().toString().trim();
+                    Date newDate = selectedDate.getTime(); // Lấy ngày mới từ Calendar
 
                     if (!newTitle.isEmpty() && !newAmountStr.isEmpty()) {
-                        double newAmount = Double.parseDouble(newAmountStr);
-                        // Gọi hàm cập nhật trên luồng nền
-                        updateExpenseInBackground(expense, position, newTitle, newAmount, newDescription);
+                        try {
+                            double newAmount = Double.parseDouble(newAmountStr);
+                            // <-- SỬA LẠI: Truyền cả newDate vào hàm cập nhật
+                            updateExpenseInBackground(expense, position, newTitle, newAmount, newDescription, newDate);
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(context, "Invalid amount", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(context, "Please enter complete information", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Hủy", null)
-                .show();
+                .setNegativeButton("Cancel", null)
+                .show(); // Hiển thị dialog
     }
 
-    // <-- THÊM MỚI: Hàm cập nhật trên luồng nền
-    private void updateExpenseInBackground(Expense oldExpense, int position, String newTitle, double newAmount, String newDescription) {
+    // <-- SỬA LẠI: Thêm tham số Date newDate vào hàm
+    private void updateExpenseInBackground(Expense oldExpense, int position, String newTitle, double newAmount, String newDescription, Date newDate) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
-            AppDatabase db = AppDatabase.getInstance(context);
+            com.example.myapplication.AppDatabase db = com.example.myapplication.AppDatabase.getInstance(context);
 
             double oldAmount = oldExpense.getAmount();
-            String budgetName = oldExpense.getCategory(); // Giả định không đổi category
+            String budgetName = oldExpense.getCategory();
 
-            // 1. Tính toán số tiền chênh lệch
             double amountDifference = newAmount - oldAmount;
 
-            // 2. Cập nhật budget tương ứng với số tiền chênh lệch
-            // Nếu chi nhiều hơn -> cộng thêm, nếu chi ít hơn -> trừ bớt
             if (budgetName != null && !budgetName.isEmpty()) {
                 db.budgetDao().updateSpentAmount(budgetName, amountDifference);
             }
 
-            // 3. Cập nhật lại thông tin cho expense
+            // Cập nhật lại thông tin cho expense
             oldExpense.setTitle(newTitle);
             oldExpense.setAmount(newAmount);
             oldExpense.setDescription(newDescription);
+            oldExpense.setDate(newDate); // <-- THÊM DÒNG NÀY: Cập nhật ngày mới cho đối tượng
+
             db.expenseDao().update(oldExpense);
 
             ((MainMenuActivity) context).runOnUiThread(() -> {
                 notifyItemChanged(position);
-                Toast.makeText(context, "Đã cập nhật chi tiêu", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Expense updated successfully", Toast.LENGTH_SHORT).show();
             });
         });
     }
-
 
     @Override
     public int getItemCount() {

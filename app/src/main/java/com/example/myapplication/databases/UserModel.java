@@ -11,7 +11,7 @@ public class UserModel {
     private  String phone;
 
     private int role;
-
+    private String password;
     private String createdAt;
 
     private String updatedAt;
@@ -70,5 +70,16 @@ public class UserModel {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getPassword() {
+        return password; // <-- Lệnh return đã được thêm vào
+    }
+    /**
+     * Hàm này thiết lập mật khẩu mới cho người dùng.
+     * @param password Mật khẩu mới
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

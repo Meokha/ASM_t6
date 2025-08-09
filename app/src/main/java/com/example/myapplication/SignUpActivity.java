@@ -70,6 +70,13 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
         });
+        tvLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
     private void signUpV1(){
         btnRegister.setOnClickListener(new View.OnClickListener() {

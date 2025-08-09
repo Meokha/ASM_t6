@@ -10,16 +10,12 @@ import androidx.room.Update;
 import com.example.myapplication.entity.Expense;
 
 import java.util.List;
-
 @Dao
 public interface ExpenseDao {
-
     @Insert
     void insert(Expense expense);
-
     @Query("SELECT * FROM expense ORDER BY createdAt DESC")
     List<Expense> getAllExpenses();
-
     @Query("DELETE FROM expense")
     void deleteAll();
     @Delete

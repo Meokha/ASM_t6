@@ -7,7 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.app.Activity;
+import android.view.Gravity;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -19,8 +25,10 @@ import com.example.myapplication.entity.Expense;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
 
@@ -32,11 +40,32 @@ public class HomeFragment extends Fragment {
 
     private TextView tvTotalBudget, tvSpentAmount;
     private LinearProgressIndicator progressBar;
-
+    private ActivityResultLauncher<Intent> addExpenseLauncher;
     public HomeFragment() {
         // Required empty public constructor
     }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+        // Đăng ký launcher để nhận kết quả từ AddExpenseActivity
+        addExpenseLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        // Nếu có kết quả trả về thành công
+                        double amount = result.getData().getDoubleExtra("EXTRA_AMOUNT", 0);
+                        String budgetName = result.getData().getStringExtra("EXTRA_BUDGET_NAME");
+
+                        // Hiển thị thông báo tùy chỉnh
+                        showCustomToast(amount, budgetName);
+
+                        // onResume() sẽ tự động được gọi sau khi Activity đóng,
+                        // nên nó sẽ tự cập nhật lại giao diện.
+                    }
+                }
+        );
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,7 +96,7 @@ public class HomeFragment extends Fragment {
         FloatingActionButton fabAddExpense = view.findViewById(R.id.btn_add_expense);
         fabAddExpense.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), AddExpenseActivity.class);
-            startActivity(intent);
+            addExpenseLauncher.launch(intent);
         });
 //        ImageButton btnReport = view.findViewById(R.id.btn_report);
 //        btnReport.setOnClickListener(v -> {
@@ -88,7 +117,25 @@ public class HomeFragment extends Fragment {
         loadRecentExpenses();
         updateOverview(); // <== THÊM GỌI LẠI UPDATE OVERVIEW
     }
+    private void showCustomToast(double amount, String budgetName) {
+        if (getContext() == null) return;
 
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.custom_toast_layout,
+                (ViewGroup) getView().findViewById(R.id.custom_toast_container));
+
+        TextView tvMessage = layout.findViewById(R.id.tv_toast_message);
+
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String message = "Spent -" + currencyFormatter.format(amount) + " from " + budgetName;
+        tvMessage.setText(message);
+
+        Toast toast = new Toast(getContext());
+        toast.setGravity(Gravity.TOP | Gravity.FILL_HORIZONTAL, 0, 50); // Vị trí ở trên cùng
+        toast.setDuration(Toast.LENGTH_LONG); // Thời gian hiển thị
+        toast.setView(layout);
+        toast.show();
+    }
     private void loadRecentExpenses() {
         List<Expense> allExpenses = AppDatabase.getInstance(getContext())
                 .expenseDao()
